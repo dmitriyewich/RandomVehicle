@@ -809,8 +809,10 @@ function SetModelIndex(this, modelIndex)
 end
 
 function main()
-	-- if not doesFileExist(folder) then GeneratedIDE() end
+	if script.find("RandomChar") and not doesFileExist(getGameDirectory() .."\\modloader\\RandomChar\\RandomChar.ide") then thisScript():unload() end
+	if script.find("RandomWeapon") and not doesFileExist(getGameDirectory() .."\\modloader\\RandomWeapon\\RandomWeapon.ide") then thisScript():unload() end
 	if not doesFileExist(folder_txt) then GeneratedIDE() end
+	
 
 	repeat wait(0) until memory.read(0xC8D4C0, 4, false) == 9
 	repeat wait(0) until fixed_camera_to_skin()
