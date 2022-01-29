@@ -23,3 +23,5 @@ Modloader, MoonLoader 026.5+,
 Open Limit Adjuster и не настроенный fastman92 limit adjuster
 или только настроенный fastman92 limit adjuster,
 OpenSAA(для сампа, не обязательно)
+
+[![Watch the video](https://i.imgur.com/IlPAMvW.png)](https://www.youtube.com/watch?v=GFBau1hbbyg)
