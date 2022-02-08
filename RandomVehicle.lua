@@ -2,7 +2,7 @@ script_name("RandomVehicle")
 script_author("dmitriyewich")
 script_url("https://vk.com/dmitriyewichmods", 'https://github.com/dmitriyewich/RandomVehicle')
 script_properties('work-in-pause', 'forced-reloading-only')
-script_version("0.1")
+script_version("0.2")
 
 local lffi, ffi = pcall(require, 'ffi')
 local lmemory, memory = pcall(require, 'memory')
@@ -14,10 +14,16 @@ u8 = encoding.UTF8
 local folder_fla = getGameDirectory() ..'\\modloader\\$ASI\\$fastman92 limit adjuster\\data\\gtasa_vehicleAudioSettings.cfg'
 local folder_txt =  getGameDirectory() .."\\modloader\\RandomVehicle\\RandomVehicle.txt"
 local folder_custom =  getGameDirectory() .."\\modloader\\RandomVehicle\\CUSTOM.ide"
+local folder_carcols_txt =  getGameDirectory() .."\\modloader\\RandomVehicle\\carcols.txt"
+local folder_carmods_txt =  getGameDirectory() .."\\modloader\\RandomVehicle\\carmods.txt"
 
 changelog = [[
 	RandomVehicle v0.1
 		- Релиз
+	RandomVehicle v0.2
+		- Изменен метод смены модели
+		- Добавлен стандартный тюнинг для авто(без него крашило)
+		- Добавлен carcols.dat, чтобы был
 ]]
 
 -- AUTHOR main hooks lib: RTD/RutreD(https://www.blast.hk/members/126461/)
@@ -563,7 +569,7 @@ local standard_car = [[400,	landstal, 	landstal, 	car, 		LANDSTAL, 	LANDSTK, 	nu
 590, 	freibox,	freibox,	train, 		FREIFLAT,	FRBOX,		null,	ignore,	 	10,	0,	0,		-1, 1.06, 1.06,		-1
 591, 	artict3, 	artict3, 	trailer,	ARTICT3, 	ARTICT3, 	null,	ignore,	 	6,	0,	0,		-1, 1.1, 1.1,		-1
 592, 	androm, 	androm, 	plane, 		ANDROM, 	ANDROM,		null,	ignore,		4,	0,	0,		-1, 0.95, 0.95,		-1
-593,	dodo,		dodo, 		plane, 		DODO,	 	DODO,		van,	ignore,		10,	0,	0,		-1, 0.56, 0.56,		-1														
+593,	dodo,		dodo, 		plane, 		DODO,	 	DODO,		van,	ignore,		10,	0,	0,		-1, 0.56, 0.56,		-1
 594, 	rccam, 		rccam, 		car, 		RCCAM,	 	RCCAM, 		null,	ignore,		1, 	0,	0,		-1, 0.25, 0.25,		-1
 595, 	launch, 	launch, 	boat,		LAUNCH,		LAUNCH, 	null,	leisureboat,	10,	0, 	0
 596, 	copcarla, 	copcarla, 	car, 		POLICE_LA, 	POLICAR,	null,	ignore,		10,	0,	0,		-1, 0.7, 0.7,	-1
@@ -796,28 +802,377 @@ boxburg 0 137 136 0 0.7 1.0 3 0.840896 -1 0 6 0 -1 0.0
 farmtr1 10 130 129 0 0.7 1.0 -1 1.0 -1 0 13 -1 -1 0.0
 utiltr1 10 -1 -1 0 0.7 1.0 -1 1.0 -1 0 13 -1 -1 0.0]]
 
-function SetModelIndex(this, modelIndex)
-	if config.vehicle[tostring(modelIndex)] ~= nil then
+local carcols = [[admiral, 34,34, 35,35, 37,37, 39,39, 41,41, 43,43, 45,45, 47,47
+alpha, 58,1, 69,1, 75,77, 18,1, 32,1, 45,45, 13,1, 34,1
+ambulan, 1,3
+androm, 1,1
+artict1, 1,1
+artict2, 1,1
+artict3, 1,1
+at400, 1,3, 8,7, 8,10, 8,16, 23,31, 40,44
+baggage, 1,73, 1,74, 1,75, 1,76, 1,77, 1,78, 1,79
+bandito, 2,39, 9,39, 17,1, 21,1, 33,0, 37,0, 41,29, 56,29
+banshee, 12,12, 13,13, 14,14, 1,2, 2,1, 1,3, 3,1, 10,10
+barracks, 43,0
+beagle, 3,90, 4,90, 7,68, 8,66, 12,60, 27,97, 34,51, 37,51
+benson,  109,25, 109,32, 112,32, 10,32, 30,44, 32,52, 84,66, 84,69
+bf400, 54,1, 58,1, 66,1, 72,1, 75,1, 87,1, 101,1, 36,1
+bfinject, 1,0, 2,2, 3,2, 3,6, 6,16, 15,30, 24,53, 35,61
+bike, 7,1, 74,1, 61,1, 16,1, 25,1, 30,1, 36,1, 53,1
+blade, 9,1, 12,1, 26,96, 30,96, 32,1, 37,1, 57,96, 71,96
+blistac, 74,72, 66,72, 53,56, 37,19, 22,22, 20,20, 9,14, 0,0
+bloodra, 51,39, 57,38, 45,29, 34,9, 65,9, 14,1, 12,9, 26,1
+bmx, 1,1, 3,3, 6,6, 46,46, 65,9, 14,1, 12,9, 26,1
+bobcat, 96,25, 97,25, 101,25, 111,31, 113,36, 83,57, 67,59
+boxburg, 36,36
+boxville, 11,123, 13,120, 20,117, 24,112, 27,107, 36,105, 37,107, 43,93
+bravura, 41,41, 47,47, 52,52, 66,66, 74,74, 87,87,91,91, 113,113
+broadway, 12,1, 19,96, 31,64, 25,96, 38,1, 51,96, 57,1, 66,96
+buccanee, 2,39, 9,39, 17,1, 21,1, 33,0, 37,0, 41,29, 56,29
+buffalo, 10,10, 13,13, 22,22, 30,30, 39,39, 90,90, 98,98, 110,110
+bullet, 51,1, 58,8, 60,1, 68,8, 2,1, 13,8, 22,1, 36,8
+burrito, 41,41, 48,48, 52,52, 64,64, 71,71, 85,85, 10,10, 62,62
+bus, 71,59, 75,59, 92,72, 47,74, 55,83, 59,83, 71,87, 82,87
+cabbie, 6,76
+caddy, 58,1, 2,1, 63,1, 18,1, 32,1, 45,1, 13,1, 34,1
+cadrona, 52,1, 53,1, 66,1, 75,1, 76,1, 81,1, 95,1, 109,1
+cargobob, 1,1
+cheetah,  20,1, 25,1, 36,1, 40,1 62,1, 75,1, 92,1, 0,1
+clover, 13,118, 24,118, 31,93, 32,92, 45,92, 113,92, 119,113, 122,113
+club, 37,37, 31,31, 23,23, 22,22, 7,7, 124,124, 114,114, 112,112
+coach,   54,7, 79,7, 87,7, 95,16, 98,20, 105,20, 123,20, 125,21
+coastg, 56,15, 56,53
+comet, 73,45, 12,12, 2,2, 6,6, 4,4, 46,46, 53,53
+copcarla, 0,1
+copcarsf, 0,1
+copcarvg, 0,1
+copcarru, 0,1
+cropdust, 17,39, 15,123, 32,112, 45,88, 52,71, 57,67, 61,96, 96,96
+dft30, 1,1
+dinghy, 56,15, 56,53
+dodo, 51,1, 58,8, 60,1, 68,8, 2,1, 13,8, 22,1, 36,8
+dozer, 1,1
+dumper, 1,1
+duneride, 91,38, 115,43, 85,6, 79,7, 78,8, 77,18, 79,18, 86,24
+elegant, 37,37, 42,42, 53,53, 62,62, 7,7, 10,10, 11,11, 15,15
+elegy, 36,1, 35,1, 17,1, 11,1, 116,1, 113,1, 101,1, 92,1
+emperor, 37,37, 42,42, 53,53, 62,62, 7,7, 10,10, 11,11, 15,15
+enforcer, 0,1
+esperant, 45,75, 47,76, 33,75, 13,76, 54,75, 69,76, 59,75, 87,76
+euros, 36,1, 40,1, 43,1, 53,1, 72,1, 75,1, 95,1, 101,1
+faggio, 12,12, 13,13, 14,14, 1,2, 2,1, 1,3, 3,1, 10,10
+fbiranch, 0,0
+fcr900, 74,74, 75,13, 87,118, 92,3, 115,118, 25,118, 36,0, 118,118
+feltzer, 73,1, 74,1, 75,1, 77,1, 79,1, 83,1, 84,1, 91,1
+firela, 3,1
+firetruk, 3,1
+flash, 37,37, 42,42, 53,53, 62,62, 7,7, 10,10, 11,11, 15,15
+flatbed, 84,15, 84,58, 84,31, 32,74, 43,31, 1,31, 77,31, 32,74
+forklift, 110,1, 111,1, 112,1, 114,1, 119,1, 122,1, 4,1, 13,1
+fortune, 2,39, 9,39, 17,1, 21,1, 33,0, 37,0, 41,29, 56,29
+freeway, 79,79, 84,84, 7,7, 11,11, 19,19, 22,22, 36,36, 53,53
+freight, 1,1
+glendale, 67,76, 68,76, 78,76, 2,76, 16,76, 18,76, 25,76, 45,88
+glenshit, 67,76, 68,76, 78,76, 2,76, 16,76, 18,76, 25,76, 45,88
+greenwoo, 30,26, 77,26, 81,27, 24,55, 28,56, 49,59, 52,69, 71,107
+hermes, 97,1, 81,1, 105,1, 110,1, 91,1, 74,1, 84,1, 83,1
+hotdog, 1,1
+hotknife, 1,1, 12,12, 2,2, 6,6, 4,4, 46,46, 53,53
+hotrina, 7,94, 36,88, 51,75, 53,75 ,58,67, 75,67, 75,61, 79,62
+hotrinb, 83,66, 87,74, 87,75, 98,83, 101,100, 103,101, 117,116, 123,36
+hotring, 36,117, 36,13, 42,30, 42,33, 54,36, 75,79, 92,101, 98,109
+hunter, 43,0
+huntley, 37,37, 42,42, 53,53, 62,62, 7,7, 10,10, 11,11, 15,15
+hustler, 50,1, 47,1, 44,96, 40,96, 39,1, 30,1, 28,96, 9,96
+infernus, 12,1, 64,1, 123,1, 116,1, 112,1, 106,1, 80,1, 75,1
+intruder, 62,37, 78,38, 2,62, 3,87, 2,78, 113,78, 119,62, 7,78
+jester, 51,1, 58,8, 60,1, 68,8, 2,1, 13,8, 22,1, 36,8
+jetmax, 36,13
+journey, 1,1
+kart, 2,35, 36,2, 51,53, 91,2, 11,22, 40,35
+landstal, 4,1, 123,1, 113,1, 101,1, 75,1, 62,1, 40,1, 36,1
+launch, 112,20
+linerun, 36,1, 37,1, 30,1, 28,1, 25,1, 40,1, 101,1, 113,1
+quad, 120,117, 103,111, 120,114, 74,91, 120,112, 74,83, 120,113, 66,71
+majestic, 37,36, 36,36, 40,36, 43,41, 47,41, 51,72, 54,75, 55,84
+mtbike, 43,43, 46,46, 39,39, 28,28, 16,16, 6,6, 5,5, 2,2
+manana, 4,1, 9,1, 10,1, 25,1, 36,1, 40,1, 45,1, 84,1
+marquis, 12,35, 50,32, 40,26, 66,36
+maverick, 26,14, 29,42, 26,57, 54,29, 26,3, 3,29, 12,39, 74,35
+merit, 67,1, 72,1, 75,1, 83,1, 91,1, 101,1, 109,1, 20,1
+mesa, 75,84, 40,84, 40,110, 28,119, 25,119, 21,119, 13,119, 4,119
+monster, 32,36, 32,42, 32,53, 32,66, 32,14, 32,32
+monstera, 1,1
+monsterb, 1,1
+moonbeam, 119,119, 117,227, 114,114, 108,108, 95,95, 81,81, 61,61, 41,41
+mower, 94,1, 101,1, 116,1, 117,1, 4,1, 25,1, 30,1, 37,1
+mrwhoop, 1,16, 1,56, 1,17, 1,53, 1,5, 1,35
+mule, 25,1, 28,1, 43,1, 67,1, 72,1, 9,1, 95,1, 24,1
+nebula, 116,1, 119,1, 122,1, 4,1, 9,1, 24,1, 27,1, 36,1
+nevada, 38,9, 55,23, 61,74, 71,87, 91,87, 98,114, 102,119, 111,3
+newsvan, 41,10, 41,20, 49,11, 56,123, 110,113, 112,116, 114,118, 119,101
+nrg500, 3,3, 3,8, 6,25, 7,79, 8,82, 36,105, 39,106, 51,118
+oceanic, 51,1, 58,8, 60,1, 68,8, 2,1, 13,8, 22,1, 36,8
+packer, 4,1, 20,1, 24,1, 25,1, 36,1, 40,1, 54,1, 84,1
+patriot, 43,0
+pcj600, 36,1, 37,1, 43,1, 53,1, 61,1, 75,1, 79,1, 88,1
+peren, 113,39, 119,50, 123,92, 109,100, 101,101, 95,105, 83,110, 66,25
+petro, 10,1, 25,1, 28,1, 36,1, 40,1, 54,1, 75,1, 113,1
+petrotr, 1,1
+phoenix, 58,1, 69,1, 75,77, 18,1, 32,1, 45,45, 13,1, 34,1
+picador, 81,8, 32,8, 43,8, 67,8, 11,11, 8,90, 2,2, 83,13
+pizzaboy,3,6
+polmav, 0,1
+pony, 87,1, 88,1, 91,1, 105,1, 109,1, 119,1, 4,1, 25,1
+predator, 46,26
+premier, 37,37, 42,42, 53,53, 62,62, 7,7, 10,10, 11,11, 15,15
+previon, 83,1, 87,1, 92,1, 95,1, 109,1, 119,45, 11,1,
+primo, 122,1, 123,1, 125,1, 10,1, 24,1, 37,1, 55,1, 66,1
+raindanc, 1,6
+rancher, 13,118, 14,123, 120,123, 112,120, 84,110, 76,102
+rcbandit, 2,96, 79,42, 82,54, 67,86, 126,96, 70,96, 110,54, 67,98
+rcbaron, 14,75
+rcraider, 14,75
+rcgoblin, 14,75
+rdtrain, 13,76, 24,77, 63,78, 42,76, 54,77, 39,78, 11,76, 62,77
+reefer, 56,56
+regina, 27,36, 59,36, 60,35, 55,41, 54,31, 49,23, 45,32, 40,29
+remingtn, 37,37, 42,42, 53,53, 62,62, 7,7, 10,10, 11,11, 15,15
+rhino, 43,0
+rnchlure, 13,118, 14,123, 120,123, 112,120, 84,110, 76,102
+romero, 0,0, 11,105, 25,109, 36,0, 40,36, 75,36, 0,36, 0,109
+rumpo, 34,34, 32,32, 20,20, 110,110, 66,66, 84,84, 118,118, 121,121
+rustler, 6,7, 7,6, 1,6, 89,91, 119,117, 103,102, 77,87, 71,77
+sabre, 2,39, 9,39, 17,1, 21,1, 33,0, 37,0, 41,29, 56,29
+sadler, 76,8, 32,8, 43,8, 67,8, 11,11, 8,90, 2,2, 83,13
+sadlshit, 61,8, 32,8, 43,8, 67,8, 11,11, 8,90, 2,2, 83,13
+sanchez, 6,6, 46,46, 53,53, 3,3
+sandking, 123,124, 119,122, 118,117, 116,115, 114,108, 101,106, 88,99, 5,6
+savanna, 97,96, 88,64, 90,96, 93,64, 97,96, 99,81, 102,114, 114,1
+seaspar, 75,2
+securica, 4,75
+sentinel, 11,1, 24,1, 36,1, 40,1, 75,1, 91,1, 123,1, 4,1
+shamal, 1,1
+streak, 1,1
+streakc, 1,1
+skimmer, 1,3, 1,9, 1,18, 1,30, 17,23, 46,23, 46,32, 57,34
+slamvan, 3,1, 28,1, 31,1, 55,1, 66,1 97,1, 123,1, 118,1
+solair, 91,1, 101,1, 109,1, 113,1, 4,1, 25,1, 30,1, 36,1
+sparrow, 1,3
+speeder, 1,3, 1,5, 1,16, 1,22, 1,35, 1,44, 1,53, 1,57
+stafford, 92,92, 81,81, 67,67, 66,66, 61,61, 53,53, 51,51, 47,47, 43,43
+stallion, 57,8, 8,17, 43,21, 54,38, 67,8, 37,78, 65,79, 25,78
+stratum, 57,8, 8,17, 43,21, 54,38, 67,8, 37,78, 65,79, 25,78
+stretch, 1,1
+stunt, 38,51, 21,36, 21,34, 30,34, 54,34, 55,20, 48,18, 51,6
+sultan, 52,39, 9,39, 17,1, 21,1, 33,0, 37,0, 41,29, 56,29
+sunrise, 37,37, 42,42, 53,53, 62,62, 7,7, 10,10, 11,11, 15,15
+supergt, 3,3, 6,6, 7,7, 52,52, 76,76
+swatvan, 1,1
+sweeper, 26,26
+tahoma, 109,1, 30,8, 95,1, 84,8, 83,1, 72,8, 71,1, 52,8
+tampa, 74,39, 72,39, 75,39, 79,39, 83,36, 84,36, 89,35, 91,35
+taxi, 6,1
+topfun, 26,26, 28,28, 44,44, 51,51, 57,57, 72,72, 106,106, 112,112
+tornado, 67,1, 68,96, 72,1, 74,8, 75,96, 76,8, 79,1, 84,96
+towtruck, 1,1, 17,20, 18,20, 22,30, 36,43, 44,51, 52,54
+tractor, 2,35, 36,2, 51,53, 91,2, 11,22, 40,35
+tram, 1,74
+trash, 26,26
+tropic, 26,26
+tug, 1,1
+tugstair, 1,1
+turismo, 123,123, 125,125, 36,36, 16,16, 18,18, 46,46, 61,61, 75,75
+uranus, 112,1, 116,1, 117,1, 24,1, 30,1, 35,1, 36,1, 40,1
+utility, 56,56, 49,49, 26,124
+vcnmav, 2,26, 2,29
+vincent, 37,37, 42,42, 53,53, 62,62, 7,7, 10,10, 11,11, 15,15
+virgo, 40,65, 71,72, 52,66, 64,72, 30,72, 60,72
+voodoo, 9,1, 10,8, 11,1, 25,8, 27,1, 29,8, 30,1, 37,8
+vortex, 96,67, 86,70, 79,74, 70,86, 61,98, 75,75, 75,91
+walton, 72,1, 66,1, 59,1, 45,1, 40,1, 39,1, 35,1, 20,1
+washing, 4,1, 13,1, 25,1, 30,1, 36,1, 40,1, 75,1, 95,1
+wayfarer, 119,1, 122,1, 8,1, 10,1, 13,1, 25,1, 27,1, 32,1
+willard, 37,37, 42,42, 53,53, 62,62, 7,7, 10,10, 11,11, 15,15
+windsor, 51,1, 58,1, 60,1, 68,1, 2,1, 13,1, 22,1, 36,1
+yankee, 84,63, 91,63, 102,65, 105,72, 110,93, 121,93, 12,95, 23,1
+yosemite, 53,32, 15,32, 45,32, 34,30, 65,32, 14,32, 12,32, 43,32
+zr350, 92,1, 94,1, 101,1, 121,1, 0,1, 22,1, 36,1, 75,1
+camper, 1,31,1,0, 1,31,1,0, 1,20,3,0, 1,5,0,0, 0,6,3,0, 3,6,3,0, 16,0,8,0, 17,0,120,0
+cement, 60,24,23,0, 61,27,123,0, 65,31,31,0, 61,61,30,0, 81,35,23,0, 62,61,62,0, 83,66,64,0, 83,64,64,0
+squalo, 0,0,0,1, 1,5,1,1, 3,3,0,1, 1,22,1,1, 1,35,1,1, 1,44,1,1, 1,53,1,1, 1,57,1,1]]
+
+local carmods = [[admiral, nto_b_l, nto_b_s, nto_b_tw
+alpha, nto_b_l, nto_b_s, nto_b_tw
+banshee, nto_b_l, nto_b_s, nto_b_tw
+blistac, rf_b_sc_r, wg_l_b_ssk, bnt_b_sc_p_m, exh_b_t, spl_b_bbb_m, spl_b_bab_m, nto_b_l, nto_b_s, nto_b_tw, spl_b_mab_m, spl_b_bar_m, bntl_b_ov, exh_b_l
+bobcat, exh_b_l, exh_b_m, exh_b_t, lgt_b_rspt, nto_b_l, nto_b_s, nto_b_tw, wg_l_b_ssk
+bravura, bnt_b_sc_l, bnt_b_sc_m, bntl_b_ov, bntl_b_sq, exh_b_l, exh_b_t, lgt_b_rspt, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bab_m, spl_b_mab_m, wg_l_b_ssk
+buccanee, bnt_b_sc_l, bntl_b_ov, bntl_b_sq, exh_b_l, exh_b_ts, lgt_b_rspt, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bab_m, spl_b_bbb_m, spl_b_mab_m, wg_l_b_ssk
+buffalo, nto_b_s, nto_b_s, nto_b_tw
+bullet, nto_b_l, nto_b_s, nto_b_tw
+cabbie, nto_b_l, nto_b_s, nto_b_tw
+cadrona, exh_b_m, exh_b_l, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, spl_b_bab_m, spl_b_bar_l, spl_b_bbr_l, wg_l_b_ssk
+cheetah, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, spl_b_bab_m, spl_b_bbb_m, spl_b_mab_m, wg_l_b_ssk
+clover, bntl_b_sq, exh_b_l, exh_b_m, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, spl_b_bar_l, spl_b_bbr_l
+club, bnt_b_sc_l, bnt_b_sc_m, bntl_b_sq, exh_b_l, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, lgt_b_sspt, lgt_b_rspt, rf_b_sc_r, spl_b_bbr_m, spl_b_mar_m, wg_l_b_ssk
+comet, nto_b_l, nto_b_s, nto_b_tw
+elegant, nto_b_l, nto_b_s, nto_b_tw
+emperor, bntl_b_ov, bntl_b_sq, exh_b_l, exh_b_t, exh_b_ts, lgt_b_rspt, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bab_m, spl_b_bbb_m, spl_b_mab_m, wg_l_b_ssk
+esperant, nto_b_l, nto_b_s, nto_b_tw
+euros, nto_b_l, nto_b_s, nto_b_tw
+feltzer, nto_b_l, nto_b_s, nto_b_tw
+fortune, nto_b_l, nto_b_s, nto_b_tw
+glendale, nto_b_l, nto_b_s, nto_b_tw
+greenwoo, bnt_b_sc_l, bnt_b_sc_m, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bbr_m, spl_b_mar_m
+hermes, nto_b_l, nto_b_s, nto_b_tw
+huntley, nto_b_l, nto_b_s, nto_b_tw
+hustler, nto_b_l, nto_b_s, nto_b_tw
+infernus, nto_b_s, nto_b_l, nto_b_tw
+intruder, bnt_b_sc_m, bntl_b_ov, bntl_b_sq, exh_b_t, exh_b_ts, lgt_b_sspt, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bar_m, spl_b_bab_m, spl_b_bbb_m, wg_l_b_ssk
+landstal, exh_b_l, exh_b_m, exh_b_t, exh_b_ts, lgt_b_rspt, lgt_b_sspt, nto_b_l, nto_b_s, nto_b_tw
+majestic, bntl_b_ov, bntl_b_sq, exh_b_l, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, spl_b_bar_m, spl_b_bbb_m, spl_b_bbr_m, spl_b_mab_m, wg_l_b_ssk
+manana, exh_b_t, exh_b_m, exh_b_l, lgt_b_rspt, lgt_b_sspt, nto_b_l, nto_b_s, nto_b_tw, spl_b_bab_m, spl_b_bbb_m, spl_b_mab_m, wg_l_b_ssk
+merit, bnt_b_sc_l, exh_b_l, exh_b_m, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bar_m, spl_b_bbb_m, spl_b_bbr_m, spl_b_mab_m
+mesa, exh_b_l, exh_b_m, exh_b_t, lgt_b_rspt, lgt_b_sspt, nto_b_l, nto_b_s, nto_b_tw
+moonbeam, exh_b_l, exh_b_m, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bar_m, spl_b_bbr_m
+nebula, bnt_b_sc_m, exh_b_l, exh_b_m, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, spl_b_bar_m, spl_b_bbr_l, spl_b_bbr_m, spl_b_mar_m, wg_l_b_ssk
+oceanic, nto_b_l, nto_b_s, nto_b_tw
+peren, exh_b_l, exh_b_m, exh_b_t, lgt_b_rspt, nto_b_l, nto_b_s, nto_b_tw, spl_b_bar_m, spl_b_bbr_m, spl_b_mar_m, wg_l_b_ssk
+phoenix, bntl_b_sq, bntl_b_ov, exh_b_l, exh_b_t, exh_b_ts, lgt_b_sspt, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bab_m, spl_b_bbb_m, wg_l_b_ssk
+picador, bnt_b_sc_l, bnt_b_sc_m, exh_b_l, exh_b_s, exh_b_ts, lgt_b_rspt, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, wg_l_b_ssk
+premier, bnt_b_sc_l, bnt_b_sc_m, exh_b_m, exh_b_t, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bab_m, spl_b_mab_m
+previon, exh_b_l, exh_b_m, exh_b_s, exh_b_t, lgt_b_rspt, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bab_m, spl_b_mab_m, wg_l_b_ssk
+primo, bntl_b_ov, exh_b_l, exh_b_m, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, spl_b_bbr_m, spl_b_mab_m, spl_b_mar_m
+rancher, bnt_b_sc_l, bnt_b_sc_m, exh_b_l, exh_b_t, exh_b_ts, lgt_b_rspt, lgt_b_sspt, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bar_m, spl_b_bbr_m, spl_b_mar_m
+regina, nto_b_l, nto_b_s, nto_b_tw
+romero, nto_b_l, nto_b_s, nto_b_tw
+sabre, nto_b_l, nto_b_s, nto_b_tw
+sentinel, exh_b_l, exh_b_m, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, spl_b_bab_m, spl_b_bar_l, spl_b_bbb_m, spl_b_mar_m
+solair, nto_b_l, nto_b_s, nto_b_tw
+stafford, exh_b_l, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bab_m, spl_b_bbb_m, wg_l_b_ssk
+stallion, spl_b_mab_m, spl_b_bbb_m, spl_b_bab_m, nto_b_l, nto_b_s, nto_b_tw, wg_l_b_ssk, bntl_b_ov, bntl_b_sq, lgt_b_rspt
+stretch, nto_b_s
+sunrise, bnt_b_sc_l, bnt_b_sc_m, bntl_b_ov, bntl_b_sq, exh_b_l, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bab_m, spl_b_bbb_m, spl_b_mab_m
+supergt, nto_b_s
+tahoma, nto_b_l, nto_b_s, nto_b_tw
+tampa, bnt_b_sc_p_l, bnt_b_sc_p_m, bntl_b_ov, bntl_b_sq, exh_b_l, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, spl_b_bab_m, spl_b_bbb_m, spl_b_mab_m, wg_l_b_ssk
+taxi, bnt_b_sc_l, bnt_b_sc_m, exh_b_m, exh_b_t, nto_b_l, nto_b_s, nto_b_tw, spl_b_bab_m, spl_b_mab_m
+turismo, nto_b_l, nto_b_s, nto_b_tw
+vincent, bnt_b_sc_m, bntl_b_ov, bntl_b_sq, exh_b_l, exh_b_t, exh_b_ts, lgt_b_sspt, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bab_m, spl_b_bbb_m, wg_l_b_ssk
+virgo, bntl_b_ov, bntl_b_sq, exh_b_l, exh_b_m, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, spl_b_bar_l, spl_b_bbb_m, spl_b_mab_m, wg_l_b_ssk
+voodoo, nto_b_l, nto_b_s, nto_b_tw
+walton, bnt_b_sc_l, bnt_b_sc_m, bnt_b_sc_p_l, exh_b_l, exh_b_m, exh_b_s, lgt_b_rspt, lgt_b_sspt, nto_b_l, nto_b_s, nto_b_tw
+washing, exh_b_l, exh_b_m, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, spl_b_bar_l, spl_b_bbb_m, spl_b_bbr_m, spl_b_mar_m
+willard, bnt_b_sc_p_l, bnt_b_sc_p_m, exh_b_l, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, spl_b_bab_m, spl_b_bbb_m, spl_b_mab_m, wg_l_b_ssk
+windsor, nto_b_l, nto_b_s, nto_b_tw
+zr350, exh_b_l, exh_b_m, exh_b_t, exh_b_ts, nto_b_l, nto_b_s, nto_b_tw, rf_b_sc_r, wg_l_b_ssk
+elegy, exh_a_l, exh_c_l, fbmp_a_l, fbmp_c_l, nto_b_l, nto_b_s, nto_b_tw, rbmp_a_l, rbmp_c_l, rf_a_l, rf_c_l, spl_a_l_b, spl_c_l_b, wg_l_a_l, wg_l_c_l
+flash, exh_a_f, exh_c_f, fbmp_a_f, fbmp_c_f, nto_b_l, nto_b_s, nto_b_tw, rbmp_a_f, rbmp_c_f, rf_a_f, rf_c_f, spl_a_f_r, spl_c_f_r, wg_l_a_f, wg_l_c_f
+jester, exh_a_j, exh_c_j, fbmp_a_j, fbmp_c_j, nto_b_l, nto_b_s, nto_b_tw, rbmp_a_j, rbmp_c_j, spl_a_j_b, spl_c_j_b, rf_a_j, rf_c_j, wg_l_a_j, wg_l_c_j, nto_b_s
+stratum, exh_a_st, exh_c_st, fbmp_a_st, fbmp_c_st, nto_b_l, nto_b_s, nto_b_tw, rbmp_a_st, rbmp_c_st, rf_a_st, rf_c_st, spl_a_st_r, spl_c_st_r, wg_l_a_st, wg_l_c_st
+sultan, exh_a_s, exh_c_s, fbmp_a_s, fbmp_c_s, nto_b_l, nto_b_s, nto_b_tw, rbmp_a_s, rbmp_c_s, rf_a_s, rf_c_s, spl_a_s_b, spl_c_s_b, wg_l_a_s, wg_l_c_s
+uranus, exh_a_u, exh_c_u, fbmp_a_u, fbmp_c_u, nto_b_l, nto_b_s, nto_b_tw, rbmp_a_u, rbmp_c_u, rf_a_u, rf_c_u, spl_a_u_b, spl_c_u_b, wg_l_a_u, wg_l_c_u
+blade, exh_lr_bl1, exh_lr_bl2, fbmp_lr_bl1, fbmp_lr_bl2, nto_b_l, nto_b_s, nto_b_tw, rbmp_lr_bl1, rbmp_lr_bl2, rf_lr_bl1, rf_lr_bl2, wg_l_lr_bl1
+broadway, exh_lr_br1, exh_lr_br2, fbmp_lr_br1, fbmp_lr_br2, nto_b_l, nto_b_s, nto_b_tw, rbmp_lr_br1, rbmp_lr_br2, wg_l_lr_br1
+remingtn, exh_lr_rem1, exh_lr_rem2, fbmp_lr_rem1, fbmp_lr_rem2, misc_c_lr_rem1, misc_c_lr_rem2, misc_c_lr_rem3, nto_b_l, nto_b_s, nto_b_tw, rbmp_lr_rem1, rbmp_lr_rem2, wg_l_lr_rem1, wg_l_lr_rem2
+savanna, exh_lr_sv1, exh_lr_sv2, fbmp_lr_sv1, fbmp_lr_sv2, nto_b_l, nto_b_s, nto_b_tw, rbmp_lr_sv1, rbmp_lr_sv2, rf_lr_sv1, rf_lr_sv2, wg_l_lr_sv
+slamvan, bbb_lr_slv1, bbb_lr_slv2, exh_lr_slv1, exh_lr_slv2, fbb_lr_slv1, fbb_lr_slv2, fbmp_lr_slv1, nto_b_l, nto_b_s, nto_b_tw, wg_l_lr_slv1, wg_l_lr_slv2
+tornado, exh_lr_t1, exh_lr_t2, fbmp_lr_t1, fbmp_lr_t2, nto_b_l, nto_b_s, nto_b_tw, rbmp_lr_t1, rbmp_lr_t2, wg_l_lr_t1]]
+
+function reqandload(id)
+	requestModel(id)
+	loadAllModelsNow()
+end
+
+function CAutomobile(this, modelIndex, createdBy, bool)
+	if config.vehicle[tostring(modelIndex)] ~= nil and isThisModelACar(modelIndex) then
 		need_id = config.vehicle[tostring(modelIndex)][random(1, #config.vehicle[tostring(modelIndex)])]
-		if not hasModelLoaded(need_id) then
-			requestModel(need_id)
-			loadAllModelsNow()
-		end
+		if not hasModelLoaded(need_id) then reqandload(need_id) end
 		modelIndex = need_id
 	end
-	SetModelIndex(this, modelIndex)
+	CAutomobile(this, modelIndex, createdBy, bool)
+end
+
+function CBike(this, modelIndex, createdBy)
+	if config.vehicle[tostring(modelIndex)] ~= nil then
+		need_id = config.vehicle[tostring(modelIndex)][random(1, #config.vehicle[tostring(modelIndex)])]
+		if not hasModelLoaded(need_id) then reqandload(need_id) end
+		modelIndex = need_id
+	end
+	CBike(this, modelIndex, createdBy)
+end
+
+function CBoat(this, modelIndex, createdBy)
+	if config.vehicle[tostring(modelIndex)] ~= nil then
+		need_id = config.vehicle[tostring(modelIndex)][random(1, #config.vehicle[tostring(modelIndex)])]
+		if not hasModelLoaded(need_id) then reqandload(need_id) end
+		modelIndex = need_id
+	end
+	CBoat(this, modelIndex, createdBy)
+end
+
+function CPlane(this, modelIndex, createdBy)
+	if config.vehicle[tostring(modelIndex)] ~= nil then
+		need_id = config.vehicle[tostring(modelIndex)][random(1, #config.vehicle[tostring(modelIndex)])]
+		if not hasModelLoaded(need_id) then reqandload(need_id) end
+		modelIndex = need_id
+	end
+	CPlane(this, modelIndex, createdBy)
+end
+
+function CHeli(this, modelIndex, createdBy)
+	if config.vehicle[tostring(modelIndex)] ~= nil then
+		need_id = config.vehicle[tostring(modelIndex)][random(1, #config.vehicle[tostring(modelIndex)])]
+		if not hasModelLoaded(need_id) then reqandload(need_id) end
+		modelIndex = need_id
+	end
+	CHeli(this, modelIndex, createdBy)
+end
+
+function CBmx(this, modelIndex, createdBy)
+	if config.vehicle[tostring(modelIndex)] ~= nil then
+		need_id = config.vehicle[tostring(modelIndex)][random(1, #config.vehicle[tostring(modelIndex)])]
+		if not hasModelLoaded(need_id) then reqandload(need_id) end
+		modelIndex = need_id
+	end
+	CBmx(this, modelIndex, createdBy)
+end
+
+function CTrailer(this, modelIndex, createdBy)
+	if config.vehicle[tostring(modelIndex)] ~= nil then
+		need_id = config.vehicle[tostring(modelIndex)][random(1, #config.vehicle[tostring(modelIndex)])]
+		if not hasModelLoaded(need_id) then reqandload(need_id) end
+		modelIndex = need_id
+	end
+	CTrailer(this, modelIndex, createdBy)
+end
+
+function CTrain(this, modelIndex, createdBy)
+	if config.vehicle[tostring(modelIndex)] ~= nil then
+		need_id = config.vehicle[tostring(modelIndex)][random(1, #config.vehicle[tostring(modelIndex)])]
+		if not hasModelLoaded(need_id) then reqandload(need_id) end
+		modelIndex = need_id
+	end
+	CTrain(this, modelIndex, createdBy)
 end
 
 function main()
-	if script.find("RandomChar") and not doesFileExist(getGameDirectory() .."\\modloader\\RandomChar\\RandomChar.ide") then thisScript():unload() end
+	if script.find("RandomChar") and not doesFileExist(getGameDirectory() .."\\modloader\\RandomChar\\RandomChar.txt") then thisScript():unload() end
 	if script.find("RandomWeapon") and not doesFileExist(getGameDirectory() .."\\modloader\\RandomWeapon\\RandomWeapon.ide") then thisScript():unload() end
 	if not doesFileExist(folder_txt) then GeneratedIDE() end
-	
 
 	repeat wait(0) until memory.read(0xC8D4C0, 4, false) == 9
 	repeat wait(0) until fixed_camera_to_skin()
 
-	SetModelIndex = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex)", SetModelIndex, 0x6D6A40)
+	CAutomobile = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy, bool)", CAutomobile, 0x6B0A90)
+	CBike = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CBike, 0x6BF430)
+	CBoat = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CBoat, 0x6F2940)
+	CPlane = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CPlane, 0x6C8E20)
+	CHeli = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CHeli, 0x6C4190)
+	CBmx = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CBmx, 0x6BF820)
+	CTrailer = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CTrailer, 0x6D03A0)
+	CTrain = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CTrain, 0x6F6030)
 
 	wait(-1)
 end
@@ -847,10 +1202,24 @@ function GeneratedIDE()
 		tas[v_1] = v_2
 	end
 
+	local tcc={}
+	for strcc in string.gmatch(carcols, "([^\n]+)") do
+		local v_1, v_2 = tostring(strcc):match('^(%w+)(.+)$')
+		tcc[v_1] = v_2
+	end
+
+	local tcm={}
+	for strcm in string.gmatch(carmods, "([^\n]+)") do
+		local v_1, v_2 = tostring(strcm):match('^(%w+)(.+)$')
+		tcm[v_1] = v_2
+	end
+
 	config.vehicle = {}
 
-	local list = 'cars\n'
+	local list ='cars\n'
 	local txt = 'vehicles.ide\n'
+	local carcols_txt = 'carcols.dat\n'
+	local carmods_txt = 'carmods.dat\n'
 	local fla = audiosettings .. '\n'
 
 	for k, v in pairs(NameModel) do
@@ -864,6 +1233,8 @@ function GeneratedIDE()
 				config.vehicle[tostring(k)][#config.vehicle[tostring(k)]+1] = tonumber(freeID[1])
 				table.remove(freeID, 1)
 				list = list .. veh_new
+				if tcc[v] then carcols_txt = carcols_txt .. no_dff .. tcc[v] .. '\n' end
+				if tcm[v] then carmods_txt = carmods_txt .. no_dff .. tcm[v] .. '\n' end
 				txt = txt .. veh_new
 				fla = fla .. no_dff .. ' ' .. tas[v] .. '\n'
 			end
@@ -872,6 +1243,14 @@ function GeneratedIDE()
 	end
 
 	list = list .. 'end'
+
+	local file = io.open(folder_carcols_txt, 'w+')
+	file:write(carcols_txt)
+	file:close()
+
+	local file = io.open(folder_carmods_txt, 'w+')
+	file:write(carmods_txt)
+	file:close()
 
 	local file = io.open(folder_fla, 'w+')
 	file:write(fla)
@@ -886,7 +1265,7 @@ function GeneratedIDE()
 	file:close()
 
 	savejson(convertTableToJsonString(config), "moonloader/config/RandomVehicle.json")
-	callFunction(0x81E5E6, 4, 0, 0, u8:decode"[RU] Сформированы:\n	RandomVehicle.ide\\CUSTOM.ide\\RandomVehicle.txt\n	Необходимо перезапустить игру\n[EN] Generated:\n	RandomVehicle.ide\\CUSTOM.ide\\RandomVehicle.txt\n	Need restart game", "RandomVehicle.lua", 0x00040000)
+	callFunction(0x81E5E6, 4, 0, 0, u8:decode"[RU] Сформированы:\n	CUSTOM.ide\\RandomVehicle.txt\n	Необходимо перезапустить игру\n[EN] Generated:\n	CUSTOM.ide\\RandomVehicle.txt\n	Need restart game", "RandomVehicle.lua", 0x00040000)
 	os.execute('taskkill /IM gta_sa.exe /F /T')
 end
 
