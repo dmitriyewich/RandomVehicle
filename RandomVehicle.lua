@@ -1157,6 +1157,24 @@ function CTrain(this, modelIndex, createdBy)
 	CTrain(this, modelIndex, createdBy)
 end
 
+function CMonsterTruck(this, modelIndex, createdBy)
+	if config.vehicle[tostring(modelIndex)] ~= nil then
+		need_id = config.vehicle[tostring(modelIndex)][random(1, #config.vehicle[tostring(modelIndex)])]
+		if not hasModelLoaded(need_id) then reqandload(need_id) end
+		modelIndex = need_id
+	end
+	CMonsterTruck(this, modelIndex, createdBy)
+end
+
+function CQuadBike(this, modelIndex, createdBy)
+	if config.vehicle[tostring(modelIndex)] ~= nil then
+		need_id = config.vehicle[tostring(modelIndex)][random(1, #config.vehicle[tostring(modelIndex)])]
+		if not hasModelLoaded(need_id) then reqandload(need_id) end
+		modelIndex = need_id
+	end
+	CQuadBike(this, modelIndex, createdBy)
+end
+
 function main()
 	if script.find("RandomChar") and not doesFileExist(getGameDirectory() .."\\modloader\\RandomChar\\RandomChar.txt") then thisScript():unload() end
 	if script.find("RandomWeapon") and not doesFileExist(getGameDirectory() .."\\modloader\\RandomWeapon\\RandomWeapon.ide") then thisScript():unload() end
@@ -1173,6 +1191,8 @@ function main()
 	CBmx = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CBmx, 0x6BF820)
 	CTrailer = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CTrailer, 0x6D03A0)
 	CTrain = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CTrain, 0x6F6030)
+	CMonsterTruck = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CMonsterTruck, 0x6C8D60)
+	CQuadBike = jmp_hook.new("void (__thiscall *)(uintptr_t this, unsigned int modelIndex, unsigned char createdBy)", CQuadBike, 0x6CE370)
 
 	wait(-1)
 end
