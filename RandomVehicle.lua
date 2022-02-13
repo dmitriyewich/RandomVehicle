@@ -2,7 +2,7 @@ script_name("RandomVehicle")
 script_author("dmitriyewich")
 script_url("https://vk.com/dmitriyewichmods", 'https://github.com/dmitriyewich/RandomVehicle')
 script_properties('work-in-pause', 'forced-reloading-only')
-script_version("0.3")
+script_version("0.3.1")
 
 require "lib.moonloader"
 local lffi, ffi = pcall(require, 'ffi')
@@ -14,10 +14,6 @@ u8 = encoding.UTF8
 
 local folder_fla = getGameDirectory() ..'\\data\\gtasa_vehicleAudioSettings.cfg'
 local folder_txt =  getGameDirectory() .."\\modloader\\RandomVehicle\\RandomVehicle.txt"
-local folder_carcols_txt =  getGameDirectory() .."\\modloader\\RandomVehicle\\carcols.txt"
-local folder_carmods_txt =  getGameDirectory() .."\\modloader\\RandomVehicle\\carmods.txt"
--- local folder_handling_txt =  getGameDirectory() .."\\modloader\\RandomVehicle\\handling.txt"
-local folder_vehaud_txt =  getGameDirectory() .."\\VehicleAudioData.ini"
 
 changelog = [[
 	RandomVehicle v0.1
@@ -31,6 +27,8 @@ changelog = [[
 		- Изменен метод подключения звука на плагин Vehicle Audio Editor Ultimate от Alexander Blade
 		- Добавлен второй скрипт RandomVehicle_siren, для включения звука сирен у новых полицейских машин
 		- Изменена структура настроек машины, теперь все настройки находятся в папке settings, для каждой машины свой .txt файл
+	RandomVehicle v0.3.1
+		- 
 ]]
 
 -- AUTHOR main hooks lib: RTD/RutreD(https://www.blast.hk/members/126461/)
@@ -1429,234 +1427,6 @@ $	RCBARON		0.5		-0.05	-0.006	  0.6 	 0.30	0.015	-0.005	0.005	0.2		0.10	0.30	0.2	
 $	RCGOBLIN	0.20	0.75	-0.001	  0.05	 0.10	0.006	 6.0	0.006	6.0		0.7		0.015	0.2	 1.0  0.1		0.989	0.850	0.860	0.992		0.0		0.0		7.0
 $	RCRAIDER	0.25	0.6		-0.002	  0.05	 0.10	0.009	 5.0	0.009	5.0		0.4		0.008	0.2	 1.0  0.1s		0.989	0.880	0.880	0.998		0.0		0.0		5.0]]
 
-local vehaudiodata = [[[400] CarType=0 EngineOnSound=99 EngineOffSound=98 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=7 HornHigh=1 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=0 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[401] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=2 HornHigh=1,18920707702637 DoorSound=2 RadioNum=5 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[402] CarType=0 EngineOnSound=38 EngineOffSound=37 Unknown4=1 Unknown5=0,899999976158142 Unknown6=1 HornTon=2 HornHigh=1,05946314334869 DoorSound=2 RadioNum=7 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[403] CarType=0 EngineOnSound=84 EngineOffSound=83 Unknown4=0 Unknown5=0 Unknown6=1 HornTon=9 HornHigh=0,840896427631378 DoorSound=3 RadioNum=2 RadioType=0 Unknown12=3 Unknown13=0 Unknown14=0 Unknown15=-2 Unknown16=64
-[404] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=7 HornHigh=1,12246203422546 DoorSound=1 RadioNum=9 RadioType=0 Unknown12=4 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[405] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=3 HornHigh=0,943874299526215 DoorSound=2 RadioNum=4 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[406] CarType=0 EngineOnSound=84 EngineOffSound=83 Unknown4=0 Unknown5=0,699999988079071 Unknown6=0,840896427631378 HornTon=4 HornHigh=0,793700516223907 DoorSound=3 RadioNum=2 RadioType=0 Unknown12=6 Unknown13=0 Unknown14=0 Unknown15=-2 Unknown16=64
-[407] CarType=0 EngineOnSound=84 EngineOffSound=83 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=4 HornHigh=0,890898704528809 DoorSound=3 RadioNum=13 RadioType=3 Unknown12=7 Unknown13=0 Unknown14=0 Unknown15=-1,0842021724855E-19 Unknown16=64
-[408] CarType=0 EngineOnSound=81 EngineOffSound=80 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=5 HornHigh=0,890898704528809 DoorSound=3 RadioNum=3 RadioType=0 Unknown12=8 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[409] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=2 HornHigh=1 DoorSound=2 RadioNum=10 RadioType=0 Unknown12=9 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[410] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=1 HornHigh=1,05946314334869 DoorSound=1 RadioNum=4 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[411] CarType=0 EngineOnSound=38 EngineOffSound=37 Unknown4=1 Unknown5=0,899999976158142 Unknown6=1 HornTon=8 HornHigh=1,12246203422546 DoorSound=2 RadioNum=6 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[412] CarType=0 EngineOnSound=46 EngineOffSound=45 Unknown4=0 Unknown5=1 Unknown6=1 HornTon=2 HornHigh=1,12246203422546 DoorSound=1 RadioNum=6 RadioType=0 Unknown12=10 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[413] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=2 HornHigh=1,25992107391357 DoorSound=4 RadioNum=1 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[414] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1,33483982086182 HornTon=7 HornHigh=0,943874299526215 DoorSound=4 RadioNum=2 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=-1,0842021724855E-19 Unknown16=64
-[415] CarType=0 EngineOnSound=103 EngineOffSound=102 Unknown4=1 Unknown5=0,899999976158142 Unknown6=1 HornTon=8 HornHigh=1 DoorSound=2 RadioNum=5 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[416] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=7 HornHigh=0,943874299526215 DoorSound=4 RadioNum=13 RadioType=3 Unknown12=12 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[417] CarType=4 EngineOnSound=12 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=13 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[418] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=1 HornHigh=0,890898704528809 DoorSound=4 RadioNum=11 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[419] CarType=0 EngineOnSound=93 EngineOffSound=92 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=2 HornHigh=1,05946314334869 DoorSound=1 RadioNum=10 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[420] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=5 HornHigh=1,12246203422546 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=14 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[421] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=3 HornHigh=0,890898704528809 DoorSound=2 RadioNum=11 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[422] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=7 HornHigh=1 DoorSound=4 RadioNum=7 RadioType=0 Unknown12=15 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[423] CarType=0 EngineOnSound=79 EngineOffSound=141 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=5 HornHigh=0,943874299526215 DoorSound=4 RadioNum=13 RadioType=0 Unknown12=16 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[424] CarType=0 EngineOnSound=76 EngineOffSound=75 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=6 HornHigh=0,890898704528809 DoorSound=255 RadioNum=6 RadioType=0 Unknown12=17 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[425] CarType=4 EngineOnSound=12 EngineOffSound=-1 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=13 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[426] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=8 HornHigh=1 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[427] CarType=0 EngineOnSound=81 EngineOffSound=80 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1,33483982086182 HornTon=9 HornHigh=1,12246203422546 DoorSound=3 RadioNum=13 RadioType=3 Unknown12=18 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[428] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=4 HornHigh=0,890898704528809 DoorSound=4 RadioNum=4 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[429] CarType=0 EngineOnSound=103 EngineOffSound=102 Unknown4=1 Unknown5=1 Unknown6=1 HornTon=3 HornHigh=1,05946314334869 DoorSound=2 RadioNum=7 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[430] CarType=3 EngineOnSound=22 EngineOffSound=21 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=7 RadioType=0 Unknown12=19 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[431] CarType=0 EngineOnSound=33 EngineOffSound=32 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=5 HornHigh=0,840896427631378 DoorSound=255 RadioNum=10 RadioType=0 Unknown12=20 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[432] CarType=0 EngineOnSound=84 EngineOffSound=83 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=9 HornHigh=0,890898704528809 DoorSound=3 RadioNum=13 RadioType=255 Unknown12=21 Unknown13=0 Unknown14=0 Unknown15=-2 Unknown16=64
-[433] CarType=0 EngineOnSound=81 EngineOffSound=80 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=9 HornHigh=0,943874299526215 DoorSound=3 RadioNum=13 RadioType=255 Unknown12=6 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[434] CarType=0 EngineOnSound=76 EngineOffSound=75 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=3 HornHigh=1,12246203422546 DoorSound=1 RadioNum=1 RadioType=0 Unknown12=17 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[435] CarType=9 EngineOnSound=-1 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[436] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=1 HornHigh=0,890898704528809 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[437] CarType=0 EngineOnSound=33 EngineOffSound=32 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=5 HornHigh=0,890898704528809 DoorSound=255 RadioNum=11 RadioType=0 Unknown12=20 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[438] CarType=0 EngineOnSound=26 EngineOffSound=25 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=4 HornHigh=1,05946314334869 DoorSound=1 RadioNum=4 RadioType=0 Unknown12=14 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[439] CarType=0 EngineOnSound=46 EngineOffSound=45 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=7 HornHigh=1,12246203422546 DoorSound=1 RadioNum=3 RadioType=0 Unknown12=22 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[440] CarType=0 EngineOnSound=142 EngineOffSound=141 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=1 HornHigh=0,840896427631378 DoorSound=4 RadioNum=1 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[441] CarType=9 EngineOnSound=36 EngineOffSound=118 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[442] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=5 HornHigh=1,12246203422546 DoorSound=4 RadioNum=13 RadioType=0 Unknown12=23 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[443] CarType=0 EngineOnSound=84 EngineOffSound=83 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=9 HornHigh=1 DoorSound=3 RadioNum=3 RadioType=0 Unknown12=6 Unknown13=0 Unknown14=0 Unknown15=-2 Unknown16=64
-[444] CarType=0 EngineOnSound=71 EngineOffSound=70 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=9 HornHigh=1,05946314334869 DoorSound=2 RadioNum=7 RadioType=0 Unknown12=24 Unknown13=0 Unknown14=0 Unknown15=-2 Unknown16=64
-[445] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=3 HornHigh=1 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[446] CarType=3 EngineOnSound=22 EngineOffSound=21 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=3 RadioType=0 Unknown12=19 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[447] CarType=4 EngineOnSound=104 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=13 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[448] CarType=1 EngineOnSound=119 EngineOffSound=118 Unknown4=2 Unknown5=1 Unknown6=1 HornTon=1 HornHigh=1,05946314334869 DoorSound=255 RadioNum=9 RadioType=0 Unknown12=25 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[449] CarType=8 EngineOnSound=132 EngineOffSound=133 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=26 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[450] CarType=9 EngineOnSound=-1 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[451] CarType=0 EngineOnSound=103 EngineOffSound=102 Unknown4=1 Unknown5=0,899999976158142 Unknown6=1 HornTon=8 HornHigh=1 DoorSound=2 RadioNum=5 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[452] CarType=3 EngineOnSound=22 EngineOffSound=21 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=3 RadioType=0 Unknown12=19 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[453] CarType=3 EngineOnSound=22 EngineOffSound=21 Unknown4=2 Unknown5=0,850000023841858 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=3 RadioType=0 Unknown12=19 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[454] CarType=3 EngineOnSound=22 EngineOffSound=21 Unknown4=2 Unknown5=0,850000023841858 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=9 RadioType=0 Unknown12=19 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[455] CarType=0 EngineOnSound=81 EngineOffSound=80 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=9 HornHigh=0,943874299526215 DoorSound=3 RadioNum=3 RadioType=0 Unknown12=6 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[456] CarType=0 EngineOnSound=142 EngineOffSound=141 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=4 HornHigh=0,943874299526215 DoorSound=3 RadioNum=2 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[457] CarType=9 EngineOnSound=64 EngineOffSound=63 Unknown4=2 Unknown5=0,899999976158142 Unknown6=1 HornTon=1 HornHigh=1,25992107391357 DoorSound=255 RadioNum=2 RadioType=0 Unknown12=27 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[458] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=3 HornHigh=1,12246203422546 DoorSound=2 RadioNum=11 RadioType=0 Unknown12=4 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[459] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=2 HornHigh=1,05946314334869 DoorSound=4 RadioNum=1 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[460] CarType=5 EngineOnSound=120 EngineOffSound=54 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=8 RadioType=0 Unknown12=42 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[461] CarType=1 EngineOnSound=125 EngineOffSound=124 Unknown4=2 Unknown5=0,699999988079071 Unknown6=1,18920707702637 HornTon=6 HornHigh=1,12246203422546 DoorSound=255 RadioNum=7 RadioType=0 Unknown12=29 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[462] CarType=1 EngineOnSound=119 EngineOffSound=118 Unknown4=2 Unknown5=1 Unknown6=1 HornTon=1 HornHigh=1,05946314334869 DoorSound=255 RadioNum=10 RadioType=0 Unknown12=25 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[463] CarType=1 EngineOnSound=140 EngineOffSound=139 Unknown4=2 Unknown5=0,649999976158142 Unknown6=1 HornTon=1 HornHigh=0,840896427631378 DoorSound=255 RadioNum=3 RadioType=0 Unknown12=29 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[464] CarType=9 EngineOnSound=107 EngineOffSound=106 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[465] CarType=9 EngineOnSound=109 EngineOffSound=108 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[466] CarType=0 EngineOnSound=17 EngineOffSound=16 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=5 HornHigh=0,943874299526215 DoorSound=1 RadioNum=6 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[467] CarType=0 EngineOnSound=17 EngineOffSound=16 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=2 HornHigh=1 DoorSound=1 RadioNum=4 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[468] CarType=1 EngineOnSound=48 EngineOffSound=47 Unknown4=2 Unknown5=0,850000023841858 Unknown6=1 HornTon=6 HornHigh=0,890898704528809 DoorSound=255 RadioNum=2 RadioType=0 Unknown12=29 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[469] CarType=4 EngineOnSound=104 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=13 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[470] CarType=0 EngineOnSound=99 EngineOffSound=98 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1,18920707702637 HornTon=9 HornHigh=1,25992107391357 DoorSound=4 RadioNum=3 RadioType=0 Unknown12=0 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[471] CarType=0 EngineOnSound=48 EngineOffSound=47 Unknown4=2 Unknown5=0,300000011920929 Unknown6=1 HornTon=1 HornHigh=1 DoorSound=255 RadioNum=2 RadioType=0 Unknown12=30 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[472] CarType=3 EngineOnSound=22 EngineOffSound=21 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=3 Unknown12=19 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[473] CarType=3 EngineOnSound=22 EngineOffSound=21 Unknown4=2 Unknown5=0,899999976158142 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=8 RadioType=0 Unknown12=43 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[474] CarType=0 EngineOnSound=35 EngineOffSound=34 Unknown4=0 Unknown5=1 Unknown6=1 HornTon=4 HornHigh=1,05946314334869 DoorSound=1 RadioNum=6 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[475] CarType=0 EngineOnSound=46 EngineOffSound=45 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=8 HornHigh=0,943874299526215 DoorSound=1 RadioNum=10 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[476] CarType=5 EngineOnSound=53 EngineOffSound=54 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=28 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[477] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=1 Unknown5=0,899999976158142 Unknown6=1 HornTon=3 HornHigh=1,12246203422546 DoorSound=2 RadioNum=5 RadioType=0 Unknown12=31 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[478] CarType=0 EngineOnSound=89 EngineOffSound=88 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1 HornTon=2 HornHigh=0,943874299526215 DoorSound=4 RadioNum=2 RadioType=0 Unknown12=15 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[479] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1 HornTon=7 HornHigh=1,18920707702637 DoorSound=2 RadioNum=9 RadioType=0 Unknown12=4 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[480] CarType=0 EngineOnSound=103 EngineOffSound=102 Unknown4=1 Unknown5=0,899999976158142 Unknown6=1 HornTon=8 HornHigh=1,12246203422546 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[481] CarType=2 EngineOnSound=19 EngineOffSound=18 Unknown4=2 Unknown5=0,699999988079071 Unknown6=1 HornTon=0 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=41 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[482] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=7 HornHigh=1,12246203422546 DoorSound=4 RadioNum=6 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[483] CarType=0 EngineOnSound=142 EngineOffSound=141 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=2 HornHigh=1,12246203422546 DoorSound=4 RadioNum=9 RadioType=0 Unknown12=44 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[484] CarType=3 EngineOnSound=22 EngineOffSound=21 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=3 RadioType=0 Unknown12=19 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[485] CarType=0 EngineOnSound=11 EngineOffSound=10 Unknown4=2 Unknown5=1 Unknown6=1 HornTon=1 HornHigh=1,12246203422546 DoorSound=255 RadioNum=9 RadioType=0 Unknown12=6 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[486] CarType=0 EngineOnSound=89 EngineOffSound=88 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=9 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=32 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[487] CarType=4 EngineOnSound=85 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=13 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[488] CarType=4 EngineOnSound=85 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=13 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[489] CarType=0 EngineOnSound=99 EngineOffSound=98 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=5 HornHigh=0,943874299526215 DoorSound=2 RadioNum=3 RadioType=0 Unknown12=0 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[490] CarType=0 EngineOnSound=99 EngineOffSound=98 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=5 HornHigh=1 DoorSound=2 RadioNum=13 RadioType=3 Unknown12=0 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[491] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=3 HornHigh=0,943874299526215 DoorSound=2 RadioNum=4 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[492] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=7 HornHigh=1,12246203422546 DoorSound=2 RadioNum=6 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[493] CarType=3 EngineOnSound=22 EngineOffSound=21 Unknown4=1 Unknown5=0,850000023841858 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=3 RadioType=0 Unknown12=19 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[494] CarType=0 EngineOnSound=38 EngineOffSound=37 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=3 HornHigh=1,12246203422546 DoorSound=2 RadioNum=7 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[495] CarType=0 EngineOnSound=99 EngineOffSound=98 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1,18920707702637 HornTon=5 HornHigh=0,943874299526215 DoorSound=2 RadioNum=3 RadioType=0 Unknown12=0 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[496] CarType=0 EngineOnSound=93 EngineOffSound=92 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=8 HornHigh=1,12246203422546 DoorSound=2 RadioNum=5 RadioType=0 Unknown12=31 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[497] CarType=4 EngineOnSound=85 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=13 RadioType=3 Unknown12=13 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[498] CarType=0 EngineOnSound=142 EngineOffSound=141 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=3 HornHigh=0,840896427631378 DoorSound=3 RadioNum=6 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[499] CarType=0 EngineOnSound=84 EngineOffSound=83 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1,33483982086182 HornTon=2 HornHigh=0,943874299526215 DoorSound=3 RadioNum=2 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=2 Unknown16=64
-[500] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=6 HornHigh=1 DoorSound=2 RadioNum=11 RadioType=0 Unknown12=0 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[501] CarType=9 EngineOnSound=109 EngineOffSound=108 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[502] CarType=0 EngineOnSound=38 EngineOffSound=37 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=3 HornHigh=0,943874299526215 DoorSound=2 RadioNum=3 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[503] CarType=0 EngineOnSound=101 EngineOffSound=100 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=7 HornHigh=1,12246203422546 DoorSound=2 RadioNum=7 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[504] CarType=0 EngineOnSound=71 EngineOffSound=70 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=2 HornHigh=0,943874299526215 DoorSound=1 RadioNum=2 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[505] CarType=0 EngineOnSound=99 EngineOffSound=98 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=5 HornHigh=0,943874299526215 DoorSound=2 RadioNum=3 RadioType=0 Unknown12=0 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[506] CarType=0 EngineOnSound=103 EngineOffSound=102 Unknown4=1 Unknown5=0,899999976158142 Unknown6=1 HornTon=4 HornHigh=1 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[507] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=7 HornHigh=1,18920707702637 DoorSound=2 RadioNum=11 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[508] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1 HornTon=4 HornHigh=1,18920707702637 DoorSound=0 RadioNum=9 RadioType=0 Unknown12=44 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[509] CarType=2 EngineOnSound=19 EngineOffSound=18 Unknown4=2 Unknown5=0,699999988079071 Unknown6=1 HornTon=0 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=41 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[510] CarType=2 EngineOnSound=19 EngineOffSound=18 Unknown4=2 Unknown5=0,699999988079071 Unknown6=1 HornTon=0 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=41 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[511] CarType=5 EngineOnSound=134 EngineOffSound=135 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=28 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[512] CarType=5 EngineOnSound=120 EngineOffSound=54 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=28 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[513] CarType=5 EngineOnSound=53 EngineOffSound=54 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=28 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[514] CarType=0 EngineOnSound=84 EngineOffSound=83 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=9 HornHigh=0,793700516223907 DoorSound=3 RadioNum=3 RadioType=0 Unknown12=3 Unknown13=0 Unknown14=0 Unknown15=-2 Unknown16=64
-[515] CarType=0 EngineOnSound=84 EngineOffSound=83 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=9 HornHigh=0,840896427631378 DoorSound=3 RadioNum=2 RadioType=0 Unknown12=3 Unknown13=0 Unknown14=0 Unknown15=-2 Unknown16=64
-[516] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=4 HornHigh=1,25992107391357 DoorSound=2 RadioNum=10 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[517] CarType=0 EngineOnSound=93 EngineOffSound=92 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=8 HornHigh=1,12246203422546 DoorSound=2 RadioNum=4 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[518] CarType=0 EngineOnSound=46 EngineOffSound=45 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=3 HornHigh=1 DoorSound=1 RadioNum=1 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[519] CarType=5 EngineOnSound=-1 EngineOffSound=-1 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=28 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[520] CarType=5 EngineOnSound=-1 EngineOffSound=-1 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=28 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[521] CarType=1 EngineOnSound=115 EngineOffSound=114 Unknown4=2 Unknown5=0,779999971389771 Unknown6=1,05946314334869 HornTon=7 HornHigh=1,25992107391357 DoorSound=255 RadioNum=7 RadioType=0 Unknown12=29 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[522] CarType=1 EngineOnSound=125 EngineOffSound=124 Unknown4=2 Unknown5=0,649999976158142 Unknown6=1 HornTon=6 HornHigh=1,18920707702637 DoorSound=255 RadioNum=5 RadioType=0 Unknown12=29 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[523] CarType=1 EngineOnSound=41 EngineOffSound=40 Unknown4=2 Unknown5=0,899999976158142 Unknown6=1 HornTon=6 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=3 Unknown12=29 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[524] CarType=0 EngineOnSound=84 EngineOffSound=83 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1 HornTon=4 HornHigh=0,943874299526215 DoorSound=3 RadioNum=3 RadioType=0 Unknown12=6 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[525] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=4 HornHigh=1 DoorSound=4 RadioNum=3 RadioType=0 Unknown12=6 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[526] CarType=0 EngineOnSound=26 EngineOffSound=25 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=3 HornHigh=0,943874299526215 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[527] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=8 HornHigh=1 DoorSound=2 RadioNum=4 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[528] CarType=0 EngineOnSound=81 EngineOffSound=80 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1,18920707702637 HornTon=5 HornHigh=0,943874299526215 DoorSound=4 RadioNum=13 RadioType=3 Unknown12=18 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[529] CarType=0 EngineOnSound=26 EngineOffSound=25 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=2 HornHigh=1,18920707702637 DoorSound=2 RadioNum=1 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[530] CarType=0 EngineOnSound=58 EngineOffSound=57 Unknown4=2 Unknown5=1 Unknown6=1 HornTon=1 HornHigh=1,05946314334869 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=33 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[531] CarType=0 EngineOnSound=89 EngineOffSound=88 Unknown4=2 Unknown5=0,649999976158142 Unknown6=1 HornTon=7 HornHigh=0,890898704528809 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=34 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[532] CarType=0 EngineOnSound=69 EngineOffSound=68 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=4 HornHigh=0,840896427631378 DoorSound=0 RadioNum=2 RadioType=0 Unknown12=35 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[533] CarType=0 EngineOnSound=93 EngineOffSound=92 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=2 HornHigh=1,18920707702637 DoorSound=2 RadioNum=6 RadioType=0 Unknown12=22 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[534] CarType=0 EngineOnSound=35 EngineOffSound=34 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=3 HornHigh=1,05946314334869 DoorSound=1 RadioNum=6 RadioType=0 Unknown12=10 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[535] CarType=0 EngineOnSound=76 EngineOffSound=75 Unknown4=0 Unknown5=1 Unknown6=1 HornTon=7 HornHigh=1,12246203422546 DoorSound=2 RadioNum=1 RadioType=0 Unknown12=10 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[536] CarType=0 EngineOnSound=46 EngineOffSound=45 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=2 HornHigh=1,18920707702637 DoorSound=257 RadioNum=6 RadioType=0 Unknown12=10 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[537] CarType=8 EngineOnSound=132 EngineOffSound=131 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=3 RadioNum=13 RadioType=255 Unknown12=39 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[538] CarType=8 EngineOnSound=132 EngineOffSound=131 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=3 RadioNum=13 RadioType=255 Unknown12=39 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[539] CarType=9 EngineOnSound=78 EngineOffSound=77 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=7 RadioType=0 Unknown12=40 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[540] CarType=0 EngineOnSound=26 EngineOffSound=25 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=3 HornHigh=0,943874299526215 DoorSound=2 RadioNum=1 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[541] CarType=0 EngineOnSound=17 EngineOffSound=16 Unknown4=1 Unknown5=1 Unknown6=1,18920707702637 HornTon=2 HornHigh=1,25992107391357 DoorSound=2 RadioNum=5 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[542] CarType=0 EngineOnSound=46 EngineOffSound=45 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1 HornTon=7 HornHigh=1,18920707702637 DoorSound=1 RadioNum=9 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[543] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=7 HornHigh=1,05946314334869 DoorSound=1 RadioNum=7 RadioType=0 Unknown12=15 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[544] CarType=0 EngineOnSound=84 EngineOffSound=83 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=9 HornHigh=0,943874299526215 DoorSound=3 RadioNum=13 RadioType=3 Unknown12=7 Unknown13=0 Unknown14=0 Unknown15=-1,0842021724855E-19 Unknown16=64
-[545] CarType=0 EngineOnSound=76 EngineOffSound=75 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=8 HornHigh=0,943874299526215 DoorSound=1 RadioNum=3 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[546] CarType=0 EngineOnSound=26 EngineOffSound=25 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=3 HornHigh=0,890898704528809 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[547] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=1 HornHigh=0,943874299526215 DoorSound=2 RadioNum=4 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[548] CarType=4 EngineOnSound=12 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=13 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[549] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1 HornTon=2 HornHigh=0,943874299526215 DoorSound=1 RadioNum=9 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[550] CarType=0 EngineOnSound=26 EngineOffSound=25 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=8 HornHigh=0,943874299526215 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[551] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=6 HornHigh=0,840896427631378 DoorSound=2 RadioNum=11 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[552] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1 HornTon=7 HornHigh=1,12246203422546 DoorSound=4 RadioNum=2 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[553] CarType=5 EngineOnSound=134 EngineOffSound=135 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=28 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[554] CarType=0 EngineOnSound=26 EngineOffSound=25 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=7 HornHigh=1,05946314334869 DoorSound=2 RadioNum=3 RadioType=0 Unknown12=15 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[555] CarType=0 EngineOnSound=101 EngineOffSound=100 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=2 HornHigh=1,25992107391357 DoorSound=1 RadioNum=10 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[556] CarType=0 EngineOnSound=71 EngineOffSound=70 Unknown4=1 Unknown5=0,899999976158142 Unknown6=1,18920707702637 HornTon=9 HornHigh=1,05946314334869 DoorSound=2 RadioNum=3 RadioType=0 Unknown12=24 Unknown13=0 Unknown14=0 Unknown15=-2 Unknown16=64
-[557] CarType=0 EngineOnSound=71 EngineOffSound=70 Unknown4=1 Unknown5=0,899999976158142 Unknown6=1,18920707702637 HornTon=9 HornHigh=1,12246203422546 DoorSound=2 RadioNum=7 RadioType=0 Unknown12=24 Unknown13=0 Unknown14=0 Unknown15=-2 Unknown16=64
-[558] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=8 HornHigh=1,05946314334869 DoorSound=514 RadioNum=3 RadioType=0 Unknown12=31 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[559] CarType=0 EngineOnSound=93 EngineOffSound=92 Unknown4=1 Unknown5=0,899999976158142 Unknown6=1 HornTon=3 HornHigh=1,12246203422546 DoorSound=514 RadioNum=8 RadioType=0 Unknown12=31 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[560] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=1 Unknown6=1 HornTon=7 HornHigh=1,18920707702637 DoorSound=514 RadioNum=6 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[561] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=3 HornHigh=1,05946314334869 DoorSound=514 RadioNum=4 RadioType=0 Unknown12=4 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[562] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=3 HornHigh=1,12246203422546 DoorSound=514 RadioNum=8 RadioType=0 Unknown12=1 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[563] CarType=4 EngineOnSound=12 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=13 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[564] CarType=9 EngineOnSound=113 EngineOffSound=112 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[565] CarType=0 EngineOnSound=93 EngineOffSound=92 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=2 HornHigh=1,25992107391357 DoorSound=514 RadioNum=5 RadioType=0 Unknown12=31 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[566] CarType=0 EngineOnSound=93 EngineOffSound=92 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=3 HornHigh=0,943874299526215 DoorSound=2 RadioNum=1 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[567] CarType=0 EngineOnSound=46 EngineOffSound=45 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=7 HornHigh=0,943874299526215 DoorSound=257 RadioNum=6 RadioType=0 Unknown12=10 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[568] CarType=0 EngineOnSound=115 EngineOffSound=114 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=7 HornHigh=1,25992107391357 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=17 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[569] CarType=8 EngineOnSound=132 EngineOffSound=131 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[570] CarType=8 EngineOnSound=132 EngineOffSound=131 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[571] CarType=0 EngineOnSound=62 EngineOffSound=61 Unknown4=2 Unknown5=0,779999971389771 Unknown6=1 HornTon=1 HornHigh=1,12246203422546 DoorSound=255 RadioNum=7 RadioType=0 Unknown12=36 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[572] CarType=0 EngineOnSound=62 EngineOffSound=61 Unknown4=2 Unknown5=0,899999976158142 Unknown6=1 HornTon=1 HornHigh=0,943874299526215 DoorSound=255 RadioNum=2 RadioType=0 Unknown12=37 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[573] CarType=0 EngineOnSound=81 EngineOffSound=80 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1,18920707702637 HornTon=4 HornHigh=0,890898704528809 DoorSound=3 RadioNum=9 RadioType=0 Unknown12=0 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[574] CarType=0 EngineOnSound=127 EngineOffSound=126 Unknown4=2 Unknown5=0,850000023841858 Unknown6=1 HornTon=5 HornHigh=1,18920707702637 DoorSound=4 RadioNum=1 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[575] CarType=0 EngineOnSound=35 EngineOffSound=34 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=3 HornHigh=0,890898704528809 DoorSound=257 RadioNum=10 RadioType=0 Unknown12=10 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[576] CarType=0 EngineOnSound=17 EngineOffSound=16 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=5 HornHigh=1,12246203422546 DoorSound=257 RadioNum=6 RadioType=0 Unknown12=10 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[577] CarType=5 EngineOnSound=-1 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=28 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[578] CarType=0 EngineOnSound=33 EngineOffSound=32 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=4 HornHigh=0,840896427631378 DoorSound=3 RadioNum=1 RadioType=0 Unknown12=6 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[579] CarType=0 EngineOnSound=99 EngineOffSound=98 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=7 HornHigh=1 DoorSound=2 RadioNum=11 RadioType=0 Unknown12=0 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[580] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=1 Unknown5=0,850000023841858 Unknown6=1 HornTon=2 HornHigh=0,890898704528809 DoorSound=2 RadioNum=11 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[581] CarType=1 EngineOnSound=125 EngineOffSound=124 Unknown4=2 Unknown5=0,779999971389771 Unknown6=1 HornTon=6 HornHigh=0,890898704528809 DoorSound=255 RadioNum=1 RadioType=0 Unknown12=29 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[582] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=4 HornHigh=1,05946314334869 DoorSound=4 RadioNum=11 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[583] CarType=0 EngineOnSound=11 EngineOffSound=10 Unknown4=2 Unknown5=0,649999976158142 Unknown6=1 HornTon=1 HornHigh=0,840896427631378 DoorSound=4 RadioNum=3 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[584] CarType=9 EngineOnSound=-1 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=3 RadioNum=13 RadioType=1 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[585] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,779999971389771 Unknown6=1 HornTon=8 HornHigh=1 DoorSound=2 RadioNum=8 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[586] CarType=1 EngineOnSound=41 EngineOffSound=40 Unknown4=2 Unknown5=0,300000011920929 Unknown6=0,890898704528809 HornTon=7 HornHigh=1,18920707702637 DoorSound=255 RadioNum=2 RadioType=0 Unknown12=29 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[587] CarType=0 EngineOnSound=8 EngineOffSound=7 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=5 HornHigh=1,25992107391357 DoorSound=2 RadioNum=9 RadioType=0 Unknown12=31 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[588] CarType=0 EngineOnSound=142 EngineOffSound=141 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1 HornTon=4 HornHigh=0,943874299526215 DoorSound=4 RadioNum=3 RadioType=0 Unknown12=11 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[589] CarType=0 EngineOnSound=93 EngineOffSound=92 Unknown4=0 Unknown5=1 Unknown6=1 HornTon=6 HornHigh=0,943874299526215 DoorSound=2 RadioNum=5 RadioType=0 Unknown12=31 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[590] CarType=8 EngineOnSound=132 EngineOffSound=131 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[591] CarType=9 EngineOnSound=-1 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=1 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[592] CarType=5 EngineOnSound=-1 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[593] CarType=5 EngineOnSound=120 EngineOffSound=54 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=0 RadioNum=3 RadioType=0 Unknown12=28 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[594] CarType=10 EngineOnSound=-1 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[595] CarType=3 EngineOnSound=22 EngineOffSound=21 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=3 Unknown12=19 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[596] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=2 HornHigh=1,05946314334869 DoorSound=2 RadioNum=13 RadioType=3 Unknown12=38 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[597] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=2 HornHigh=1,05946314334869 DoorSound=2 RadioNum=13 RadioType=3 Unknown12=38 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[598] CarType=0 EngineOnSound=87 EngineOffSound=86 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=7 HornHigh=1,05946314334869 DoorSound=2 RadioNum=13 RadioType=3 Unknown12=38 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[599] CarType=0 EngineOnSound=99 EngineOffSound=98 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=4 HornHigh=1,05946314334869 DoorSound=2 RadioNum=13 RadioType=3 Unknown12=38 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[600] CarType=0 EngineOnSound=26 EngineOffSound=25 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=7 HornHigh=1,12246203422546 DoorSound=2 RadioNum=6 RadioType=0 Unknown12=15 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[601] CarType=0 EngineOnSound=81 EngineOffSound=80 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=9 HornHigh=0,943874299526215 DoorSound=3 RadioNum=13 RadioType=3 Unknown12=18 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[602] CarType=0 EngineOnSound=38 EngineOffSound=37 Unknown4=0 Unknown5=0,850000023841858 Unknown6=1 HornTon=3 HornHigh=1 DoorSound=2 RadioNum=6 RadioType=0 Unknown12=31 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[603] CarType=0 EngineOnSound=101 EngineOffSound=100 Unknown4=0 Unknown5=0,899999976158142 Unknown6=1 HornTon=8 HornHigh=1,05946314334869 DoorSound=1 RadioNum=1 RadioType=0 Unknown12=2 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[604] CarType=0 EngineOnSound=17 EngineOffSound=16 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1 HornTon=5 HornHigh=1,05946314334869 DoorSound=1 RadioNum=1 RadioType=0 Unknown12=45 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[605] CarType=0 EngineOnSound=95 EngineOffSound=94 Unknown4=0 Unknown5=0,649999976158142 Unknown6=1 HornTon=7 HornHigh=1,05946314334869 DoorSound=1 RadioNum=3 RadioType=0 Unknown12=15 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[606] CarType=10 EngineOnSound=130 EngineOffSound=129 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[607] CarType=10 EngineOnSound=130 EngineOffSound=129 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[608] CarType=10 EngineOnSound=130 EngineOffSound=129 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[609] CarType=0 EngineOnSound=137 EngineOffSound=136 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=3 HornHigh=0,840896427631378 DoorSound=255 RadioNum=6 RadioType=0 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[610] CarType=10 EngineOnSound=130 EngineOffSound=129 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0
-[611] CarType=10 EngineOnSound=-1 EngineOffSound=-1 Unknown4=0 Unknown5=0,699999988079071 Unknown6=1 HornTon=255 HornHigh=1 DoorSound=255 RadioNum=13 RadioType=255 Unknown12=255 Unknown13=0 Unknown14=0 Unknown15=0 Unknown16=0]]
-
-local vehaud_test = [[ 8:02 07.07.2008
- (C) Alexander
-
-[LOADING]
-TYPE=1
-; Type = 0 - loading without stream , 1 - using stream
-; if u have some troubles with sounds try to set TYPE in 0
-
-[IDs]
-Number_of_pairs=1
-FromID_1=400
-ToID_1=20000
-
-]] .. vehaudiodata:gsub('%s', '\n')
-
 function reqandload(id)
 	requestModel(id)
 	loadAllModelsNow()
@@ -1838,12 +1608,6 @@ function GeneratedIDE()
 		tcm[v_1] = v_2
 	end
 
-	local tveaud={}
-	for strveaud in string.gmatch(vehaudiodata, "([^\n]+)") do
-		local v_1, v_2, v_3, v_4 = tostring(strveaud):match('^(%W)(%d+)(%W)(.+)$')
-		tveaud[v_2] = v_4:gsub('%s', '\n')
-	end
-
 	config.vehicle = {}
 
 	local txt = 'vehicles\n'
@@ -1851,11 +1615,10 @@ function GeneratedIDE()
 	local carmods_txt = 'carmods\n'
 	local fla = audiosettings .. '\n'
 	local handling_txt = 'handling\n'
-	
-	tetst = ''
-	handling_txt_tet = ''
-	teststst = ""
+	local num_models = 0
 
+	local handling_txt_tet = ''
+	local teststst = ""
 	
 	if not doesDirectoryExist(getGameDirectory() .."\\modloader\\RandomVehicle\\settings\\") then createDirectory(getGameDirectory() .."\\modloader\\RandomVehicle\\settings\\") end
 	for k, v in pairs(NameModel) do
@@ -1892,7 +1655,7 @@ function GeneratedIDE()
 				if tcc[v] then handling_txt_tet = handling_txt_tet .. carcols_txt .. no_dff .. tcc[v] .. '\n' end
 				if tcm[v] then handling_txt_tet = handling_txt_tet .. carmods_txt .. no_dff .. tcm[v] .. '\n' end
 				fla = fla .. no_dff .. ' ' .. tas[v] .. '\n'
-				tetst = tetst .. '\n[' .. freeID[1] ..']' .. tveaud[tostring(k)] .. '\n'
+				num_models = num_models + 1
 				handling_txt_tet = handling_txt_tet .. '\n'
 					local folder_handling_txt =  getGameDirectory() .."\\modloader\\RandomVehicle\\settings\\"..v..".txt"
 					local file_handling = io.open(folder_handling_txt, 'w+')
@@ -1902,24 +1665,17 @@ function GeneratedIDE()
 			file = findNextFile(search)
 		end
 	end
-	
-	vehaud_test = vehaud_test .. tetst
-	
 
-	-- local file = io.open(folder_fla, 'w+')
-	-- file:write(fla)
-	-- file:close()
+	local file = io.open(folder_fla, 'w+')
+	file:write(fla)
+	file:close()
 
 	local file = io.open(folder_txt, 'w+')
 	file:write('Спасибо за использование скрипта!\n\nmy vk: https://vk.com/dmitriyewichmods\ngithub: https://github.com/dmitriyewich/RandomVehicle\nyoutube: https://youtu.be/GFBau1hbbyg')
 	file:close()
-	
-	local file = io.open(folder_vehaud_txt, 'w+')
-	file:write(vehaud_test)
-	file:close()
 
 	savejson(convertTableToJsonString(config), "moonloader/config/RandomVehicle.json")
-	callFunction(0x81E5E6, 4, 0, 0, u8:decode"[RU] Сформированы:\n	CUSTOM.ide\\RandomVehicle.txt\n	Необходимо перезапустить игру\n[EN] Generated:\n	CUSTOM.ide\\RandomVehicle.txt\n	Need restart game", "RandomVehicle.lua", 0x00040000)
+	callFunction(0x81E5E6, 4, 0, 0, u8:decode"[RU] Добавлено: ".. num_models ..u8:decode" моделей\nСформированы:\n	settings\\RandomVehicle.txt\n	Необходимо перезапустить игру\n[EN] Added: ".. num_models .."models\nGenerated:\n	settings\\RandomVehicle.txt\n	Need restart game", "RandomVehicle.lua", 0x00040000)
 	os.execute('taskkill /IM gta_sa.exe /F /T')
 end
 
