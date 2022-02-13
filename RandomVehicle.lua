@@ -8,8 +8,6 @@ require "lib.moonloader"
 local lffi, ffi = pcall(require, 'ffi')
 local lmemory, memory = pcall(require, 'memory')
 
-local lhooks, hooks = pcall(require, 'hooks')
-
 local lencoding, encoding = pcall(require, 'encoding')
 encoding.default = 'CP1251'
 u8 = encoding.UTF8
