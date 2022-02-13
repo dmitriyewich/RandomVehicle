@@ -28,7 +28,8 @@ changelog = [[
 		- Добавлен второй скрипт RandomVehicle_siren, для включения звука сирен у новых полицейских машин
 		- Изменена структура настроек машины, теперь все настройки находятся в папке settings, для каждой машины свой .txt файл
 	RandomVehicle v0.3.1
-		- 
+		- Вернул метод подключения звука на старый
+		- Добавил сирены скорой, которую забыл добавить
 ]]
 
 -- AUTHOR main hooks lib: RTD/RutreD(https://www.blast.hk/members/126461/)
@@ -1530,7 +1531,7 @@ function main()
 
 	repeat wait(0) until memory.read(0xC8D4C0, 4, false) == 9
 	repeat wait(0) until fixed_camera_to_skin()
-	
+
 	CAutomobile = jmp_hook.new("void (__thiscall *)(uintptr_t, unsigned int, unsigned char, bool)", CAutomobile, 0x6B0A90)
 	CBike = jmp_hook.new("void (__thiscall *)(uintptr_t, unsigned int, unsigned char)", CBike, 0x6BF430)
 	CBoat = jmp_hook.new("void (__thiscall *)(uintptr_t, unsigned int, unsigned char)", CBoat, 0x6F2940)
@@ -1541,7 +1542,7 @@ function main()
 	CTrain = jmp_hook.new("void (__thiscall *)(uintptr_t, unsigned int, unsigned char)", CTrain, 0x6F6030)
 	CMonsterTruck = jmp_hook.new("void (__thiscall *)(uintptr_t, unsigned int, unsigned char)", CMonsterTruck, 0x6C8D60)
 	CQuadBike = jmp_hook.new("void (__thiscall *)(uintptr_t, unsigned int, unsigned char)", CQuadBike, 0x6CE370)
-	
+
 	wait(-1)
 end
 
@@ -1564,13 +1565,13 @@ function GeneratedIDE()
 		t[tonumber(v_1)] = {v_3, v_5}
 		test123[tonumber(v_1)] = {v_4}
 	end
-	
+
 	local tha={}
 	for strha in string.gmatch(handling_cfg, "([^\n]+)") do
 		local v_1, v_2 = tostring(strha):match('^(%S+)(.+)$')
 		tha[v_1] = v_2
 	end
-	
+
 	local tbha={}
 	for strbha in string.gmatch(bike_han, "([^\n]+)") do
 		local v_1, v_2, v_3  = tostring(strbha):match('^(%S+%s+)(%S+)(.+)$')
@@ -1619,7 +1620,7 @@ function GeneratedIDE()
 
 	local handling_txt_tet = ''
 	local teststst = ""
-	
+
 	if not doesDirectoryExist(getGameDirectory() .."\\modloader\\RandomVehicle\\settings\\") then createDirectory(getGameDirectory() .."\\modloader\\RandomVehicle\\settings\\") end
 	for k, v in pairs(NameModel) do
 		local folder_dff = getGameDirectory() .."\\modloader\\RandomVehicle\\models\\" ..v.. "\\*.dff"
@@ -1627,17 +1628,17 @@ function GeneratedIDE()
 		if file ~= nil then config.vehicle[tostring(k)] = {k} end
 		while file do
 			if file ~= (v..".dff") then
-				if not (teststst):match(v) then 
+				if not (teststst):match(v) then
 					teststst = v
 					handling_txt_tet = ''
 				end
-				
+
 				local no_dff = file:gsub("%.[dD][fF][fF]", "")
 				local veh_new = freeID[1] .. ", " .. no_dff .. ", " .. no_dff .. ", " .. t[k][1] .. "" .. no_dff:upper() .. t[k][2] .. "\n"
 				config.vehicle[tostring(k)][#config.vehicle[tostring(k)]+1] = tonumber(freeID[1])
 				table.remove(freeID, 1)
-				
-				if tha[test123[k][1]] then 
+
+				if tha[test123[k][1]] then
 					handling_txt_tet = handling_txt_tet .. handling_txt .. no_dff:upper() .. tha[test123[k][1]] .. '\n'
 					if tbha[test123[k][1]] then
 						handling_txt_tet = handling_txt_tet .. tbha[test123[k][1]][1] .. no_dff:upper() .. tbha[test123[k][1]][2] .. '\n'
@@ -1649,9 +1650,9 @@ function GeneratedIDE()
 						handling_txt_tet = handling_txt_tet .. tfha[test123[k][1]][1] .. no_dff:upper() .. tfha[test123[k][1]][2] .. '\n'
 					end
 				end
-				
+
 				handling_txt_tet = handling_txt_tet .. txt .. veh_new
-				
+
 				if tcc[v] then handling_txt_tet = handling_txt_tet .. carcols_txt .. no_dff .. tcc[v] .. '\n' end
 				if tcm[v] then handling_txt_tet = handling_txt_tet .. carmods_txt .. no_dff .. tcm[v] .. '\n' end
 				fla = fla .. no_dff .. ' ' .. tas[v] .. '\n'
